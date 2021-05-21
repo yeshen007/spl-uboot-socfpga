@@ -35,6 +35,11 @@
 #include <asm/io.h>
 #include <watchdog.h>
 #include <asm/arch/sdram.h>
+/***********************************************************************************************
+ * 				hanglory double boot
+ * 				author yezheng
+ *********************************************************************************************/
+#include <hanglory_config.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -164,7 +169,16 @@ __weak void __noreturn jump_to_image_no_args(struct spl_image_info *spl_image)
 			debug("CRC Result : Expected 0x%08x "
 				"Calculated 0x%08x\n",
 				spl_image->crc, calculated_crc);
+/***********************************************************************************************
+ * 				hanglory double boot
+ * 				author yezheng
+ *********************************************************************************************/
+#ifndef HANGLORY_SPL_BOOT_UBOOT
 			hang();
+#else
+			/* 校验不通过则从副本加载启动 */
+			hanglory_spl_boot();
+#endif
 		} else
 			debug("OK\n");
 	}
@@ -262,7 +276,7 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 #endif
 #ifdef CONFIG_SPL_SPI_SUPPORT
 	case BOOT_DEVICE_SPI:
-		spl_spi_load_image();
+		spl_spi_load_image();   /* 加载镜像到ddr，但没校验 */
 		break;
 #endif
 #ifdef CONFIG_SPL_ETH_SUPPORT

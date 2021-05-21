@@ -19,6 +19,11 @@ COBJS-$(CONFIG_SPL_NOR_SUPPORT) += spl_nor.o
 COBJS-$(CONFIG_SPL_YMODEM_SUPPORT) += spl_ymodem.o
 COBJS-$(CONFIG_SPL_NAND_SUPPORT) += spl_nand.o
 COBJS-$(CONFIG_SPL_NET_SUPPORT) += spl_net.o
+#**********************************************************************************************
+#* 				hanglory double boot
+#* 				author yezheng
+#**********************************************************************************************
+COBJS-y += hanglory_spl_spi.o
 endif
 
 COBJS	:= $(sort $(COBJS-y))

@@ -224,7 +224,11 @@ COBJS-y += dlmalloc.o
 COBJS-y += image.o
 COBJS-y += memsize.o
 COBJS-y += stdio.o
-
+#**********************************************************************************************
+#* 				hanglory double boot
+#* 				author yezheng
+#**********************************************************************************************
+COBJS-y += cmd_hangloryboot.o
 
 COBJS	:= $(sort $(COBJS-y))
 XCOBJS	:= $(sort $(XCOBJS-y))
