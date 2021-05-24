@@ -27,7 +27,7 @@ static void hanglory_uboot_parse_image_header(const struct image_header *header)
 			hanglory_uboot_image.size = image_get_data_size(header);
 		} else {
 			printf("coming here hahahahahahaha\n");
-			hanglory_uboot_image.entry_point = image_get_load(header);		//除去头部后的地址
+			hanglory_uboot_image.entry_point = image_get_ep(header);		//除去头部后的地址
 			/* Load including the header */
 			hanglory_uboot_image.load_addr = hanglory_uboot_image.entry_point -
 				header_size;					//头部地址
@@ -67,7 +67,7 @@ static int hanglory_uboot_crc_check(void)
 			puts("Bad image with mismatched CRC\n");
 			debug("CRC calculate from 0x%08x "
 				"with length 0x%08x\n",
-				hanglory_uboot_image.entry_point, hanglory_uboot_image.size);
+				hanglory_uboot_image.entry_point, hanglory_uboot_image.crc_size);
 			debug("CRC Result : Expected 0x%08x "
 				"Calculated 0x%08x\n",
 				hanglory_uboot_image.crc, calculated_crc);
@@ -98,11 +98,11 @@ static int do_hangloryboot(cmd_tbl_t *cmdtp, int flag, int argc, char * const ar
 	
 	/* 如果通过则执行oriboot命令，没通则执行secondboot命令 */
 	if (ret == 0) {
-        puts("oriboot.....\n")
+        puts("oriboot.....\n");
 		s = getenv("oriboot");
 		run_command_list(s, -1, 0);
 	} else {
-        puts("secondboot.....\n")
+        puts("secondboot.....\n");
 		s =getenv("secondboot");
 		run_command_list(s, -1, 0);
 	}
