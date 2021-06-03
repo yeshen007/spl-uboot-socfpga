@@ -1,5 +1,8 @@
-/* hanglory double boot  */
-
+/***********************************************************************************************
+ * 				hanglory double boot
+ * 				author yezheng
+ *               hanglory_spl_spi.c
+ *********************************************************************************************/
 #include <common.h>
 #include <spi.h>
 #include <spi_flash.h>
@@ -18,7 +21,7 @@ static void hanglory_spl_parse_image_header(const struct image_header *header)
 	u32 header_size = sizeof(struct image_header);
 
 	if (image_get_magic(header) == IH_MAGIC) {
-		if (hanglory_spl_image.flags & SPL_COPY_PAYLOAD_ONLY) {
+		if (hanglory_spl_image.flags & SPL_COPY_PAYLOAD_ONLY) { //SPL_COPY_PAYLOAD_ONLY在spl.h中定义
 			/*
 			 * On some system (e.g. powerpc), the load-address and
 			 * entry-point is located at address 0. We can't load
@@ -29,12 +32,12 @@ static void hanglory_spl_parse_image_header(const struct image_header *header)
 			hanglory_spl_image.size = image_get_data_size(header);
 		} else {
 			printf("coming here hahahahahahaha\n");
-			hanglory_spl_image.entry_point = image_get_load(header);		//除去头部后的地址0x01000040
+			hanglory_spl_image.entry_point = image_get_load(header);		
 			/* Load including the header */
 			hanglory_spl_image.load_addr = hanglory_spl_image.entry_point -
-				header_size;					//头部地址0x01000000
+				header_size;				
 			hanglory_spl_image.size = image_get_data_size(header) +
-				header_size;					//镜像的长度（包括头部）
+				header_size;			
 		}
 		hanglory_spl_image.os = image_get_os(header);
 		hanglory_spl_image.name = image_get_name(header);
