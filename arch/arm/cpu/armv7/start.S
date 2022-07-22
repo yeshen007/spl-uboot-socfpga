@@ -129,11 +129,37 @@ FIQ_STACK_START:
 IRQ_STACK_START_IN:
 	.word	0x0badc0de
 
+/**************************************************
+ *	  点亮portb 25低电平有效的Boot_State指示灯				*
+ **************************************************/
+PORTB_DATA_ADDR:
+	.word 0xff709000
+PORTB_DIR_ADDR:
+	.word 0xff709004		
+
+ENTRY(led_boot_state_on)
+	ldr r2,PORTB_DIR_ADDR
+	ldr r1,[r2]
+	orr r1, r1, #(0x1<<25)		
+	str r1,[r2]
+	ldr r2,PORTB_DATA_ADDR
+	ldr r1,[r2]
+	bic r1, r1, #(0x1<<25)
+	str r1,[r2]
+	mov pc, lr
+ENDPROC(led_boot_state_on)	
+
+
 /*
  * the actual reset code
  */
 
 reset:
+/**************************************************
+ *	  点亮portb 25低电平有效的Boot_State指示灯				*
+ **************************************************/
+	bl led_boot_state_on
+		
 	bl	save_boot_params
 	/*
 	 * set the cpu to SVC32 mode
@@ -166,6 +192,7 @@ reset:
 #endif
 
 	bl	_main
+
 
 /*------------------------------------------------------------------------------*/
 
@@ -477,7 +504,7 @@ ENDPROC(cpu_init_crit)
 	.macro get_bad_stack_swi
 	sub	r13, r13, #4			@ space on current stack for
 						@ scratch reg.
-	str	r0, [r13]			@ save R0's value.
+	str	r0, [r13]			@ save R0 value.
 	ldr	r0, IRQ_STACK_START_IN		@ get data regions start
 						@ spots for abort stack
 	str	lr, [r0]			@ save caller lr in position 0
